@@ -29,7 +29,7 @@ pipeline = {
 	
 	stage('Git-Checkin') {
         echo "########################## 4. Running  Git-Checkin ##########################"
-        withCredentials([usernamePassword(credentialsId: 'ci.server', usernameVariable: 'Username', passwordVariable: 'Password')]) {
+        withCredentials([usernamePassword(credentialsId: 'icedwizlon', usernameVariable: 'Username', passwordVariable: 'Password')]) {
        
         
        
@@ -37,7 +37,7 @@ pipeline = {
         sh("git commit -a -m 'new model added'")
         sh("git status")
         
-        sh("git push --set-upstream https://${Username}:${Password}@gitlab.logistics.corp/other-projects/semarchy.git dev")
+        sh("git push --set-upstream https://${Username}:${Password}@https://github.com/icedwizz/deployment.git dev")
         
         }
     }
