@@ -29,7 +29,7 @@ pipeline = {
 	
 	stage('Git-Checkin') {
         echo "########################## 4. Running  Git-Checkin ##########################"
-        withCredentials([usernamePassword(credentialsId: 'icedwizlon', usernameVariable: 'Username', passwordVariable: 'Password')]) {
+        withCredentials([usernamePassword(credentialsId: 'icedwizz', usernameVariable: 'Username', passwordVariable: 'Password')]) {
        
         
        
