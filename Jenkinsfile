@@ -14,7 +14,7 @@ pipeline = {
         sh "chmod +x -R ${env.WORKSPACE}"
       
        
-        sh "${WORKSPACE}/Scripts/buildRelease.sh -apiKey=tjO4XFM.YyIj1DidmcCRB72RMUISPtPLaoVD4IhE4Yx -serverBase=http://localhost:8088/semarchy -modelName=DemoTest -devModelEdition=0.1 -o='Models' -r='Building release for DemoTest [0.1]'"
+        sh "${WORKSPACE}/Scripts/buildRelease.sh -apiKey=tjO4XFM.YyIj1DidmcCRB72RMUISPtPLaoVD4IhE4Yx -serverBase=http://localhost:8088/semarchy -modelName=DemoTest -devModelEdition=0.1 -r='Building release for DemoTest [0.1]'"
         
 	
        
@@ -23,7 +23,7 @@ pipeline = {
     stage('Test-Release') {
         echo "########################## 3. Running  Test-Release ##########################"
         sh "chmod +x -R ${env.WORKSPACE}"
-        sh "${WORKSPACE}/Scripts/testRelease.sh -apiKey=tjO4XFM.YyIj1DidmcCRB72RMUISPtPLaoVD4IhE4Yx -inputFolder='Models' -serverBase=http://localhost:8088/semarchy -dataLocation='DemoTest' -modelName=DemoTest"
+        sh "${WORKSPACE}/Scripts/testRelease.sh -apiKey=tjO4XFM.YyIj1DidmcCRB72RMUISPtPLaoVD4IhE4Yx -serverBase=http://localhost:8088/semarchy -dataLocation='DemoTest' -modelName=DemoTest"
 
 	}
 	
