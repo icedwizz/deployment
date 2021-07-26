@@ -1,5 +1,6 @@
 pipeline = {
-	agent any
+
+	stages {
 	
     stage('Git-Checkout'){
       echo "########################## 1. Running  Git-Checkout ##########################"
@@ -43,6 +44,7 @@ pipeline = {
         
         }
     
+	}
 	}
 }
 
