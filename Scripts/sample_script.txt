@@ -1,0 +1,152 @@
+#!/bin/bash
+set -eou pipefail
+
+#-----------------------------#
+# Author: SpotQA
+# Contact: support@spotqa.com
+# Title: Example script for triggering Virtuoso APIs to execute journeys in a goal
+# Requirements: This script requires curl and jq to be installed.
+# Last modified: 22/06/2020
+#-----------------------------#
+
+
+if [ $# -eq 0 ]; then
+    echo "Usage: ./execute.sh -t VIRTUOSO_TOKEN --goal_id ID_OF_GOAL_TO_EXECUTE [--snapshot_id SPECIFIC_SNAPSHOT_ID] [--staging]"
+    exit 1
+fi
+
+# Check for support
+if ! type "jq" > /dev/null; then
+  echo "jq needs to be installed. See: https://stedolan.github.io/jq/download/"
+  exit 1
+fi
+
+if ! type "curl" > /dev/null; then
+  echo "curl needs to be installed."
+  exit 1
+fi
+
+ENV="api"
+SNAPSHOT_ID=""
+
+# Set arguments
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+key="$1"
+
+case $key in
+    -u|--user)
+    VIRTUOSO_USER="$2"
+    shift
+    shift
+    ;;
+    -p|--password)
+    VIRTUOSO_PASSWORD="$2"
+    shift
+    shift
+    ;;
+    -t|--token)
+    VIRTUOSO_TOKEN="$2"
+    shift
+    shift
+    ;;
+    -gi|--goal_id)
+    GOAL_ID="$2"
+    shift
+    shift
+    ;;
+    -s|--snapshot_id) # Optional param
+    SNAPSHOT_ID="$2"
+    shift
+    shift
+    ;;
+    --staging) # Optional param
+    ENV="api-staging"
+    shift
+    ;;
+    *)
+    POSITIONAL+=("$1")
+    shift
+    ;;
+esac
+done
+set -- "${POSITIONAL[@]}"
+
+
+# Login to virtoso
+TOKEN="$VIRTUOSO_TOKEN"
+if [ -n "${VIRTUOSO_USER:-}" ]; then
+  TOKEN=$(curl -s -X POST -H "Content-Type: application/json" -d '{ "email": "'$VIRTUOSO_USER'", "password":"'$VIRTUOSO_PASSWORD'"}' "https://$ENV.virtuoso.qa/api/auth/login?envelope=false" | jq -r .token)
+fi
+
+if [[ "$TOKEN" == "null" ]]; then
+  echo "failed to login. Please check credentials and try again"
+  exit 1
+fi
+
+if [ -z $GOAL_ID ] || [ "$GOAL_ID" == "null" ]; then
+  echo "Target goal not found. Please supply that using: --goal_id 123 where 123 is your goal id."
+  exit 1
+fi
+
+# Get latest snapshot
+if [ -z $SNAPSHOT_ID ]; then
+  SNAPSHOT_ID=$(curl -s --header "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" "https://$ENV.virtuoso.qa/api/goals/$GOAL_ID?envelope=false" | jq -r .latestSnapshotId)
+fi
+
+if [ -z $SNAPSHOT_ID ] || [ "$SNAPSHOT_ID" == "null" ]; then
+  echo "Could not find latest snapshot for goal."
+  exit 1
+fi
+
+# Launch execution
+echo "Going to execute snapshot $SNAPSHOT_ID of goal $GOAL_ID"
+JOB_ID=$(curl -s --header "Authorization: Bearer $TOKEN" -X POST "https://$ENV.virtuoso.qa/api/goals/$GOAL_ID/execute?envelope=false" | jq -r .id)
+
+if [ -z $JOB_ID ] || [ "$JOB_ID" == "null" ]; then
+  echo "Failed to execute job."
+  exit 1
+fi
+echo "Launched execution job $JOB_ID"
+
+# wait for job to complete
+echo "--------"
+RUNNING=true
+OUTCOME=""
+while $RUNNING; do
+  JOB=$(curl -s --header "Authorization: Bearer $TOKEN" "https://$ENV.virtuoso.qa/api/executions/$JOB_ID/status?envelope=false")
+  JOB_STATUS=$(echo $JOB | jq -r .status)
+  OUTCOME=$(echo $JOB | jq -r .outcome)
+
+  echo "Job execution status: $JOB_STATUS, outcome: $OUTCOME"
+
+  if [ "$JOB_STATUS" == "FINISHED" ] || [ "$JOB_STATUS" == "CANCELED" ] || [ "$JOB_STATUS" == "FAILED" ]; then
+    RUNNING=false
+  else
+    sleep 2
+  fi
+done
+
+echo "--------"
+echo "Executed job $JOB_ID with outcome: $OUTCOME"
+
+# Save execution result
+curl -s --header "Authorization: Bearer $TOKEN" "https://$ENV.virtuoso.qa/api/snapshots/$SNAPSHOT_ID/goals/$GOAL_ID/testsuites?envelope=false" | jq -r '.' > "tests.json"
+curl -s --header "Authorization: Bearer $TOKEN" "https://$ENV.virtuoso.qa/api/executions/$JOB_ID?envelope=false" | jq -r '.' > "execution_report.json"
+echo "Exported tests and the report as tests.json and execution_report.json"
+
+# Different exit code for when job did not fail/error but status was not finished (cancelled/failed)
+if [ "$JOB_STATUS" != "FINISHED" ]; then
+  exit 3
+fi
+
+# terminate unsuccessfully if job did not pass
+if [ "$OUTCOME" == "FAIL" ] || [ "$OUTCOME" == "ERROR" ]; then
+  exit 2
+fi
+
+echo "Done!"
+
+
+#./execute.sh -t=4191fb17-cdbf-4f6f-8244-48a62f967d30 -u=shane.wilson@viqtordavis.com -p=admin1234 --goal_id=
