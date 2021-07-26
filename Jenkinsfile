@@ -1,6 +1,6 @@
 pipeline = {
 	agent any
-	stages {
+	
     stage('Git-Checkout'){
       echo "########################## 1. Running  Git-Checkout ##########################"
        sh("git branch")
@@ -42,7 +42,7 @@ pipeline = {
         sh("git push --set-upstream https://${Username}:${Password}@https://github.com/icedwizz/deployment.git dev")
         
         }
-    }
+    
 	}
 }
 
