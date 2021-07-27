@@ -19,11 +19,33 @@ pipeline {
                  sh "${WORKSPACE}/Scripts/buildRelease.sh -apiKey=tjO4XFM.YyIj1DidmcCRB72RMUISPtPLaoVD4IhE4Yx -serverBase=http://localhost:8088/semarchy -modelName=DemoTest -devModelEdition=0.1 -o='Models' -r='Building release for DemoTest [0.1]'"
                  }
         }
-        stage('Test') {
+        
+         stage('Test-Release') {
+             steps {
+                echo "########################## 3. Running  Test-Release ##########################"
+                sh "chmod +x -R ${env.WORKSPACE}"
+                sh "${WORKSPACE}/Scripts/testRelease.sh -apiKey=tjO4XFM.YyIj1DidmcCRB72RMUISPtPLaoVD4IhE4Yx -serverBase=http://localhost:8088/semarchy -dataLocation='DemoTest' -modelName=DemoTest"
+             }
+	    }
+        
+        stage('Virtuoso') {
             steps {
-                echo "######################### 3. Running  Virtuoso Execute  #######################"
+                echo "######################### . Running  Virtuoso Execute  #######################"
                 sh "${WORKSPACE}/Scripts/execute.sh -t=4191fb17-cdbf-4f6f-8244-48a62f967d30 -u=shane.wilson@viqtordavis.com -p=admin1234 --goal_id=6200"
             }
         }
-    }
+	
+	    stage('Git-Checkin') {
+            steps {
+                echo "########################## 4. Running  Git-Checkin ##########################"
+                withCredentials([usernamePassword(credentialsId: 'icedwizz', usernameVariable: 'Username', passwordVariable: 'Password')]) {
+                sh("git add --all")
+                sh("git commit -a -m 'new model added'")
+                sh("git status")
+                sh("git push --set-upstream https://${Username}:${Password}@https://github.com/icedwizz/deployment.git dev")
+            }
+        }
+    
+	}
+    
 }
