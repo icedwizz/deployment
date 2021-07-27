@@ -11,10 +11,13 @@ pipeline {
                     sh "git pull"
                     }
         }
-        stage('Test') {
+        
+        stage('Build-Release') {
             steps {
-                echo 'Testing..'
-            }
+                 echo "########################## 2. Running  Build-Release ##########################"
+                 sh "chmod +x -R ${env.WORKSPACE}"
+                 sh "${WORKSPACE}/Scripts/buildRelease.sh -apiKey=tjO4XFM.YyIj1DidmcCRB72RMUISPtPLaoVD4IhE4Yx -serverBase=http://localhost:8088/semarchy -modelName=DemoTest -devModelEdition=0.1 -r='Building release for DemoTest [0.1]'"
+                 }
         }
         stage('Deploy') {
             steps {
