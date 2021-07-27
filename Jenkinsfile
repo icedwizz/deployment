@@ -1,6 +1,5 @@
 pipeline = {
-
-	stages {
+	agent any
 	
     stage('Git-Checkout'){
       echo "########################## 1. Running  Git-Checkout ##########################"
@@ -15,9 +14,7 @@ pipeline = {
        
         echo "########################## 2. Running  Build-Release ##########################"
         sh "chmod +x -R ${env.WORKSPACE}"
-      
-       
-        sh "${WORKSPACE}/Scripts/buildRelease.sh -apiKey=tjO4XFM.YyIj1DidmcCRB72RMUISPtPLaoVD4IhE4Yx -serverBase=http://localhost:8088/semarchy -modelName=DemoTest -devModelEdition=0.1 -r='Building release for DemoTest [0.1]'"
+      	sh "${WORKSPACE}/Scripts/buildRelease.sh -apiKey=tjO4XFM.YyIj1DidmcCRB72RMUISPtPLaoVD4IhE4Yx -serverBase=http://localhost:8088/semarchy -modelName=DemoTest -devModelEdition=0.1 -r='Building release for DemoTest [0.1]'"
         
 	
        
@@ -39,13 +36,12 @@ pipeline = {
         sh("git add --all")
         sh("git commit -a -m 'new model added'")
         sh("git status")
-        
         sh("git push --set-upstream https://${Username}:${Password}@https://github.com/icedwizz/deployment.git dev")
         
         }
     
 	}
-	}
+	
 }
 
 
