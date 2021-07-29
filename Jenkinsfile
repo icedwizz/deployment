@@ -38,7 +38,7 @@ pipeline {
 	    stage('Git-Checkin') {
             steps {
                 echo "########################## 4. Running  Git-Checkin ##########################"
-               // withCredentials([usernamePassword(credentialsId: 'icedwizz', usernameVariable: 'Username', passwordVariable: 'Password')]) {
+                withCredentials([usernamePassword(credentialsId: 'icedwizz', usernameVariable: 'Username', passwordVariable: 'Password')]) {
                 bat("git add --all")
                 bat("git commit -a -m 'new model added'")
                 bat("git status")
