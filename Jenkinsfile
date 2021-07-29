@@ -43,10 +43,16 @@ pipeline {
                 bat("git commit -a -m 'new model added'")
                 bat("git status")
                 bat("git push --set-upstream https://${Username}:${Password}@https://github.com/icedwizz/deployment.git dev")
-          //  }
+            }
         }
-    
-	}
-    
+	    }
+    }
 }
+postFailure = {
+    echo "Semarchy Dev-Pipeline failed"
 }
+
+postAlways = {
+    echo "I always run"
+}
+    
