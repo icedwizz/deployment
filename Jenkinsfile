@@ -38,12 +38,12 @@ pipeline {
 	    stage('Git-Checkin') {
             steps {
                 echo "########################## 4. Running  Git-Checkin ##########################"
-                withCredentials([usernamePassword(credentialsId: 'icedwizz', usernameVariable: 'Username', passwordVariable: 'Password')]) {
+               // withCredentials([usernamePassword(credentialsId: 'icedwizz', usernameVariable: 'Username', passwordVariable: 'Password')]) {
                 bat("git add --all")
                 bat("git commit -a -m 'new model added'")
                 bat("git status")
                 bat("git push --set-upstream https://${Username}:${Password}@https://github.com/icedwizz/deployment.git dev")
-            }
+          //  }
         }
     
 	}
