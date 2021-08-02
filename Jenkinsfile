@@ -5,19 +5,19 @@ pipeline {
         stage('Git-Checkout') {
             steps {
                     echo "########################## 1. Running  Git-Checkout ##########################"
-                    sh ("git branch")
-                    sh "git reset --hard"
-                    sh "git checkout dev"
-                    sh "git pull"
+                    bat ("git branch")
+                    bat "git reset --hard"
+                    bat "git checkout dev"
+                    bat "git pull"
                     }
         }
         
         stage('Build-Release') {
             steps {
                  echo "########################## 2. Running  Build-Release ##########################"
-		 echo "${WORKSPACE}/Scripts/buildRelease.sh"
+		 //echo "${WORKSPACE}/Scripts/buildRelease.sh"
                  //sh "chmod +x -R ${env.WORKSPACE}"
-                 sh "${WORKSPACE}/Scripts/buildRelease.sh -apiKey=tjO4XFM.YyIj1DidmcCRB72RMUISPtPLaoVD4IhE4Yx -serverBase=http://localhost:8088/semarchy -modelName=DemoTest -devModelEdition=0.1 -o='Models' -r='Building release for DemoTest [0.1]'"
+                 bat("${WORKSPACE}/Scripts/buildRelease.sh -apiKey=tjO4XFM.YyIj1DidmcCRB72RMUISPtPLaoVD4IhE4Yx -serverBase=http://localhost:8088/semarchy -modelName=DemoTest -devModelEdition=0.1 -r='Building release for DemoTest [0.1]'")
                  }
         }
         
@@ -25,14 +25,14 @@ pipeline {
              steps {
                 echo "########################## 3. Running  Test-Release ##########################"
                 //sh chmod +x -R ${env.WORKSPACE}"
-                sh "${WORKSPACE}/Scripts/testRelease.sh -apiKey=tjO4XFM.YyIj1DidmcCRB72RMUISPtPLaoVD4IhE4Yx -serverBase=http://localhost:8088/semarchy -dataLocation='DemoTest' -modelName=DemoTest"
+                bat("${WORKSPACE}/Scripts/testRelease.sh -apiKey=tjO4XFM.YyIj1DidmcCRB72RMUISPtPLaoVD4IhE4Yx -serverBase=http://localhost:8088/semarchy -dataLocation='DemoTest' -modelName=DemoTest")
              }
 	    }
         
         stage('Virtuoso') {
             steps {
                 echo "######################### . Running  Virtuoso Execute  #######################"
-                sh "${WORKSPACE}/Scripts/execute.sh -t=4191fb17-cdbf-4f6f-8244-48a62f967d30 -u=shane.wilson@viqtordavis.com -p=admin1234 --goal_id=6200"
+                bat("${WORKSPACE}/Scripts/execute.sh -t=4191fb17-cdbf-4f6f-8244-48a62f967d30 -u=shane.wilson@viqtordavis.com -p=admin1234 --goal_id=6200")
             }
         }
 	
