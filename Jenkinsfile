@@ -5,10 +5,10 @@ pipeline {
         stage('Git-Checkout') {
             steps {
                     echo "########################## 1. Running  Git-Checkout ##########################"
-                    bat ("git branch")
-                    bat "git reset --hard"
-                    bat "git checkout dev"
-                    bat "git pull"
+                    sh ("git branch")
+                    sh "git reset --hard"
+                    sh "git checkout dev"
+                    sh "git pull"
                     }
         }
         
