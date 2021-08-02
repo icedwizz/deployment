@@ -15,6 +15,7 @@ pipeline {
         stage('Build-Release') {
             steps {
                  echo "########################## 2. Running  Build-Release ##########################"
+		 echo "${WORKSPACE}/Scripts/buildRelease.sh"
                  //sh "chmod +x -R ${env.WORKSPACE}"
                  sh "${WORKSPACE}/Scripts/buildRelease.sh -apiKey=tjO4XFM.YyIj1DidmcCRB72RMUISPtPLaoVD4IhE4Yx -serverBase=http://localhost:8088/semarchy -modelName=DemoTest -devModelEdition=0.1 -o='Models' -r='Building release for DemoTest [0.1]'"
                  }
