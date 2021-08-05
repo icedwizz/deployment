@@ -4,11 +4,7 @@ pipeline {
     stages {
         stage('Git-Checkout') {
             steps {
-                    echo "########################## 1. Running  Git-Checkout ##########################"
-                    bat ("git branch")
-                    bat "git reset --hard"
-                    bat "git checkout dev"
-                    bat "git pull"
+                    checkout scm
                     }
         }
         
@@ -21,17 +17,7 @@ pipeline {
             }
         }
 	
-	    stage('Git-Checkin') {
-            steps {
-                echo "########################## 4. Running  Git-Checkin ##########################"
-                withCredentials([usernamePassword(credentialsId: '985b7153-e495-47cd-8ca1-b7af13fdab57', usernameVariable: 'Username', passwordVariable: 'Password')]) {
-                bat("git add --all")
-                bat('git commit -am "new model added"')
-                bat("git status")
-                bat("git push --set-upstream https://${Username}:${Password}@https://github.com/icedwizz/deployment.git dev")
-            }
-        }
-	    }
+	    
     }
 }
 postFailure = {
