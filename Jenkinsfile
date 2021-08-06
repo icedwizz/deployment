@@ -25,7 +25,7 @@ pipeline {
              steps {
                 echo "########################## 3. Running  Test-Release ##########################"
                 //sh chmod +x -R ${env.WORKSPACE}"
-                bat("${WORKSPACE}/Scripts/testRelease.sh -apiKey=tjO4XFM.YyIj1DidmcCRB72RMUISPtPLaoVD4IhE4Yx -serverBase=http://localhost:8088/semarchy -dataLocation='DemoTest' -modelName=DemoTest")
+                bat("${WORKSPACE}/Scripts/testRelease.sh -apiKey=tjO4XFM.YyIj1DidmcCRB72RMUISPtPLaoVD4IhE4Yx -inputFolder="Models" -serverBase=http://localhost:8088/semarchy -dataLocation='DemoTest' -modelName=DemoTest")
              }
 	    }
         
