@@ -18,7 +18,7 @@ pipeline {
 		 //echo "${WORKSPACE}/Scripts/buildRelease.sh"
                  //sh "chmod +x -R ${env.WORKSPACE}"
 		   
-                 powershell("${WORKSPACE}/Scripts/buildRelease.ps1 -apiKey=tjO4XFM.YyIj1DidmcCRB72RMUISPtPLaoVD4IhE4Yx -serverBase=http://localhost:8088/semarchy -modelName=DemoTest -devModelEdition=0.1 -o='Models' -r='Building release for DemoTest [0.1]'")
+                 powershell "${WORKSPACE}/Scripts/buildRelease.ps1 -apiKey=tjO4XFM.YyIj1DidmcCRB72RMUISPtPLaoVD4IhE4Yx -serverBase=http://localhost:8088/semarchy -modelName=DemoTest -devModelEdition=0.1 -o='Models' -r='Building release for DemoTest [0.1]'"
 		    
 		    }
 		    
